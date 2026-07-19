@@ -28,7 +28,7 @@ const register = async (req, res, next) => {
         res.status(200).json({
             status: "success",
             message: "Account created successfully",
-            account: user
+            user
         })
     } catch (err) {
         console.log(err)
@@ -38,30 +38,30 @@ const register = async (req, res, next) => {
 // Post login (Authorization, signing in)
 const login = async (req, res, next) => {
     try {
-        const { username, password } = req.body;
+        const { email, password } = req.body;
 
-        if(!username || !password) {
+        if(!email || !password) {
             return res.status(400).json({
                 status: "fail",
                 message: "Credentials are required in order to be authorized"
             }) 
         }
 
-        const user = await User.find({username, password});
+        const user = await User.findOne({email});
 
-        if(!user) {
+        if(!user || user.password !== password) {
             return res.status(400).json({
                 status: "fail",
                 message: "Credentials are incorrect"
             })
         }
-
+        
         user.password = undefined;
 
         res.status(200).json({
             status: "success",
             message: "Succesfully logged in",
-            user: user
+            user
         })
 
     } catch (err) {
