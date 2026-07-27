@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
 const authContext = createContext();
 
@@ -9,6 +10,8 @@ export default useAuth;
 const API_URL = "http://localhost:3000/api/auth"
 
 export function AuthContextProvider({children}) {
+    const navigate = useNavigate();
+
     const [user, setUser] = useState(() => {
         return JSON.parse(localStorage.getItem("user")) || null;
     });
@@ -32,7 +35,7 @@ export function AuthContextProvider({children}) {
             setUser(data.user)
             localStorage.setItem("user", JSON.stringify(user))
             alert(data.message)
-            
+            navigate('/')
         } catch (err) {
             alert(err)
         }
@@ -56,6 +59,7 @@ export function AuthContextProvider({children}) {
             setUser(data.user)
             localStorage.setItem("user", JSON.stringify(user))
             alert(data.message)
+            navigate('/')
             
         } catch (err) {
             alert(err)

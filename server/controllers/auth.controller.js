@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const bcrypt = require('bcrypt');
 
 // POST register (Creating a new account)
 const register = async (req, res, next) => {
@@ -48,8 +49,18 @@ const login = async (req, res, next) => {
         }
 
         const user = await User.findOne({email});
+        
 
-        if(!user || user.password !== password) {
+        if(!user) {
+            return res.status(400).json({
+                status: "fail",
+                message: "Credentials are incorrect"
+            })
+        }
+
+        const isCorrect = await bcrypt.compare(password, user.password)
+
+        if(!isCorrect) {
             return res.status(400).json({
                 status: "fail",
                 message: "Credentials are incorrect"

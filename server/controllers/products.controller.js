@@ -26,7 +26,7 @@ const addProduct = async (req, res, next) => {
         res.status(201).json({
             status: "success",
             message: "Product added sucessfully",
-            product: newProduct
+            newProduct
         })
     } catch (err) {
         res.send(err)
@@ -78,4 +78,21 @@ const deleteProduct = async (req, res, next) => {
     }
 }
 
-module.exports = { addProduct, getProducts, getProduct, deleteProduct }
+const updateProduct = async (req, res, next) => {
+    try {   
+        const { id } = req.params;
+        const { name, description, stock, price, icon } = req.body;
+
+        const updatedProduct = await Product.findByIdAndUpdate(id, {name, description, stock, price, icon})
+
+        res.status(200).json({
+            status: "success",
+            message: "Product updated successfully",
+            updatedProduct
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+module.exports = { addProduct, getProducts, getProduct, deleteProduct, updateProduct }
