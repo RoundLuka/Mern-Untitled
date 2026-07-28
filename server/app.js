@@ -37,6 +37,13 @@ app.get("/api/test", (req, res, next) => {
     res.send('Server is running!')
 })
 
+
+// Global Error Handler Middleware
+app.use((err, req, res, next) => {
+    console.log(err)
+    res.status(500).send()
+})
+
 // Running server
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {

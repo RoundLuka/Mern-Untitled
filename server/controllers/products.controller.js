@@ -2,7 +2,6 @@
 
 const Product = require("../models/products.model")
 
-
 // 5 Routes
 // 1. POST (Add a new product)
 // 2. GET (Get all products)
@@ -13,6 +12,7 @@ const Product = require("../models/products.model")
 const addProduct = async (req, res, next) => {
     try {
         const { name, description, price, stock, icon } = req.body
+        
 
         if(!name || !description || !price || !icon) {
             return res.status(400).json({
@@ -26,7 +26,9 @@ const addProduct = async (req, res, next) => {
         res.status(201).json({
             status: "success",
             message: "Product added sucessfully",
-            newProduct
+            newProduct,
+            author: user.email,
+            authorId: user._id
         })
     } catch (err) {
         res.send(err)
@@ -69,8 +71,20 @@ const getProduct = async (req, res, next) => {
 }
 
 const deleteProduct = async (req, res, next) => {
+    const { _id } = req.user;
+
+
     try {
         const { id } = req.params;
+
+        const foundPost = await Products.findById(id)
+
+        if (_id !== foundPost.authorId) {
+            return res.status(400).json({
+                message: "You aren't permitted to delete this product"
+            })
+        }
+
         await Product.findByIdAndDelete(id)
         res.status(204).send()
     } catch (err) {
@@ -80,8 +94,17 @@ const deleteProduct = async (req, res, next) => {
 
 const updateProduct = async (req, res, next) => {
     try {   
+        const {_id} = req.user;
         const { id } = req.params;
         const { name, description, stock, price, icon } = req.body;
+
+        const toUpdateProduct = await Product.findById(id)
+
+        if(toUpdateProduct.authorId !== _id) {
+            return res.status(400).json({
+                message: "You aren't permitted to update this product"
+            })
+        }
 
         const updatedProduct = await Product.findByIdAndUpdate(id, {name, description, stock, price, icon})
 

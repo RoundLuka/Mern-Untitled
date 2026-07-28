@@ -1,5 +1,9 @@
 const User = require("../models/user.model");
 const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
+const dotenv = require('dotenv');
+
+dotenv.config()
 
 // POST register (Creating a new account)
 const register = async (req, res, next) => {
@@ -67,12 +71,27 @@ const login = async (req, res, next) => {
             })
         }
         
+        // 1. Payload ობიექტი, მომხმარებლის ინფორმაცია
+        // 2. Server-ის საიდმულო გასაღები secret
+        // 3. დამატებიტი ოპციები, token-ის ვადა
+
+        
+        const token = jwt.sign({userId: user._id, username: user.username, email: user.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRE_TIME});
+
         user.password = undefined;
+
+        res.cookie('JWT_Token', token, { 
+            maxAge: Number(process.env.JWT_DUE) * 24 * 60 * 60 * 1000, 
+            secure: process.env.NODE_ENV !== 'dev', 
+            httpOnly: true, 
+            sameSite: 'lax' 
+        });
 
         res.status(200).json({
             status: "success",
             message: "Succesfully logged in",
-            user
+            user,
+            token
         })
 
     } catch (err) {
