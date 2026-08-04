@@ -39,6 +39,10 @@ const Admin = () => {
         setUpdating(null)
     }
 
+    if (user) {
+        return <p>Loading...</p>
+    }
+
     return (
         <>
             <h1>Admin</h1>

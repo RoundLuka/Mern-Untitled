@@ -20,6 +20,10 @@ const productSchema = new mongoose.Schema({
     icon: {
         type: String,
         required: true
+    },
+    managerId: {
+        type: String,
+        default: '6a5895ab8a49953833ecd4d0'
     }
 });
 

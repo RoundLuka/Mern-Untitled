@@ -10,6 +10,9 @@ const Product = require("../models/products.model")
 // 5. PUT
 
 const addProduct = async (req, res, next) => {
+    const userId = req.userId
+    
+
     try {
         const { name, description, price, stock, icon } = req.body
         
@@ -21,14 +24,12 @@ const addProduct = async (req, res, next) => {
             })
         }
 
-        const newProduct = await Product.insertOne({name, description, price, stock, icon})
+        const newProduct = await Product.insertOne({name, description, price, stock, icon, managerId: userId})
 
         res.status(201).json({
             status: "success",
             message: "Product added sucessfully",
             newProduct,
-            author: user.email,
-            authorId: user._id
         })
     } catch (err) {
         res.send(err)
@@ -71,15 +72,14 @@ const getProduct = async (req, res, next) => {
 }
 
 const deleteProduct = async (req, res, next) => {
-    const { _id } = req.user;
-
+    const managerId = req.userId;
 
     try {
         const { id } = req.params;
 
-        const foundPost = await Products.findById(id)
+        const foundProduct = await Product.findById(id)
 
-        if (_id !== foundPost.authorId) {
+        if (managerId !== foundProduct.managerId) {
             return res.status(400).json({
                 message: "You aren't permitted to delete this product"
             })
@@ -93,14 +93,14 @@ const deleteProduct = async (req, res, next) => {
 }
 
 const updateProduct = async (req, res, next) => {
+    const managerId = req.userId;
     try {   
-        const {_id} = req.user;
         const { id } = req.params;
         const { name, description, stock, price, icon } = req.body;
 
         const toUpdateProduct = await Product.findById(id)
 
-        if(toUpdateProduct.authorId !== _id) {
+        if(toUpdateProduct.managerId !== managerId) {
             return res.status(400).json({
                 message: "You aren't permitted to update this product"
             })

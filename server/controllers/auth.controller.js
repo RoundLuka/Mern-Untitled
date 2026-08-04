@@ -76,7 +76,11 @@ const login = async (req, res, next) => {
         // 3. დამატებიტი ოპციები, token-ის ვადა
 
         
-        const token = jwt.sign({userId: user._id, username: user.username, email: user.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRE_TIME});
+        const token = jwt.sign(
+            {userId: user._id, username: user.username, email: user.email}, 
+            process.env.JWT_SECRET, 
+            {expiresIn: process.env.JWT_EXPIRE_TIME}
+        );
 
         user.password = undefined;
 

@@ -4,6 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const cookieParser = require('cookie-parser');
 
 // Routers
 const authRouter = require("./routers/auth.router");
@@ -19,8 +20,10 @@ dotenv.config()
 
 // -------- Security Middleware --------
 app.use(cors({
-    origin: ["http://localhost:5173"]
+    origin: ["http://localhost:5173"],
+    credentials: true 
 }));
+app.use(cookieParser())
 
 // -------- Helper Middleware ---------
 app.use(express.json());

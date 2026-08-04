@@ -1,11 +1,8 @@
 const jwt = require("jsonwebtoken");
-const dotenv = require('dotenv');
 const User = require("../models/user.model");
 
-dotenv.config()
-
 const protect = async (req, res, next) => {
-    const {token} = req.body
+    const token = req.cookies.JWT_Token
 
     if(!token) {
         return res.status(400).json({
@@ -18,7 +15,7 @@ const protect = async (req, res, next) => {
 
         if(!payload) {
             return res.status(400).json({
-                message: "Token is either invalid or expired"
+                message: "Token is either incorrect or expired"
             })
         }
 
@@ -26,11 +23,12 @@ const protect = async (req, res, next) => {
 
         if(!user) {
             return res.status(400).json({
-                message: "Token is either invalid or expired"
+                message: "Token is either incorrect or expired"
             })
         }
-
+        
         req.user = user
+        req.userId = payload.userId
         next();
     } catch (err) {
         res.status(400).json({
