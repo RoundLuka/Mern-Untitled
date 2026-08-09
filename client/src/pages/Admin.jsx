@@ -3,7 +3,7 @@ import useAuth from "../context/authContext";
 import useProduct from "../context/ProductContext";
 
 const Admin = () => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const { products, createProduct, deleteProduct, updateProduct } = useProduct();
 
     const [updating, setUpdating] = useState(null);
@@ -16,7 +16,7 @@ const Admin = () => {
             description: e.target.description.value,
             stock: e.target.stock.value,
             price: e.target.price.value,
-            icon: e.target.image.value
+            icon: e.target.image.files[0]
         }
 
         createProduct(data);
@@ -39,15 +39,12 @@ const Admin = () => {
         setUpdating(null)
     }
 
-    if (user) {
-        return <p>Loading...</p>
-    }
-
     return (
         <>
             <h1>Admin</h1>
             <p>Username: {user.username}</p>
             <p>Email: {user.email}</p>
+            <button onClick={logout}>Logout</button>
 
             <h2>Add Product</h2> 
             <form onSubmit={addProduct}>
@@ -55,7 +52,7 @@ const Admin = () => {
                 <input type="text" name="description" placeholder="Description" required /> <br />
                 <input type="number" name="stock" placeholder="Stock" required /> <br />
                 <input type="number" name="price" placeholder="Price" required /> <br />
-                <input type="text" name="image" placeholder="Image" required /> <br />
+                <input type="file" name="image" /> <br />
                 <button type="Submit">Add product</button>
             </form>
 
@@ -82,7 +79,7 @@ const Admin = () => {
                                     <p>Description: {product.description}</p>
                                     <p>Stock: {product.stock}</p>
                                     <p>Price: {product.price}$</p>
-                                    <img src={product.icon} width='150' /> 
+                                    <img src={`http://localhost:3000/${product.icon}`} width='150' /> 
                                     <button onClick={() => deleteProduct(product._id)}>Delete</button>
                                     <button onClick={() => setUpdating(product._id)}>Edit</button>
                                 </>

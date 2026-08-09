@@ -19,7 +19,6 @@ const productSchema = new mongoose.Schema({
     },
     icon: {
         type: String,
-        required: true
     },
     managerId: {
         type: String,

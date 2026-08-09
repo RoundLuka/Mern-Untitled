@@ -13,16 +13,22 @@ export const ProductContextProvider = ({children}) => {
 
     useEffect(() => {
         getProducts();
+        console.log(products)
     }, [])
 
     const createProduct = async (prodInfo) => {
+        const formData = new FormData()
+        formData.append('name', prodInfo.name)
+        formData.append('description', prodInfo.description)
+        formData.append('stock', prodInfo.stock)
+        formData.append('price', prodInfo.price)
+        formData.append('icon', prodInfo.icon)
+
         try {
             const response = await fetch(API_URL, {
                 method: "POST",
-                headers: {
-                    "Content-Type": 'application/json'
-                },
-                body: JSON.stringify(prodInfo)
+                credentials: "include",
+                body: formData
             })
 
             const data = await response.json()
@@ -57,7 +63,8 @@ export const ProductContextProvider = ({children}) => {
     const deleteProduct = async(id) => {
         try {
             const response = await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                credentials: "include"
             })
 
             if(!response.ok) {
@@ -79,6 +86,7 @@ export const ProductContextProvider = ({children}) => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: "include",
                 body: JSON.stringify(newInfo)
             })
 

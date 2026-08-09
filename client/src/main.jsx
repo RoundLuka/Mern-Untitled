@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router'; 
 import { AuthContextProvider } from './context/AuthContext.jsx';
 import { ProductContextProvider } from './context/ProductContext.jsx';
+import { ToastContainer } from 'react-toastify';
 
 createRoot(document.getElementById('root')).render(
 
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')).render(
       <AuthContextProvider>
         <ProductContextProvider>
           <App />
+          <ToastContainer /> 
         </ProductContextProvider>
       </AuthContextProvider>
     </BrowserRouter>

@@ -17,7 +17,7 @@ const Home = () => {
                             <p>Description: {product.description}</p>
                             <p>Stock: {product.stock}</p>
                             <p>Price: {product.price}$</p>
-                            <img src={product.icon} width='150' /> 
+                            <img src={`http://localhost:3000/${product.icon}`} width='150' /> 
                             <hr />
                         </div>
                     )

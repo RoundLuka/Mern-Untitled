@@ -11,20 +11,19 @@ const Product = require("../models/products.model")
 
 const addProduct = async (req, res, next) => {
     const userId = req.userId
-    
 
     try {
+        // data base will automatically validate this
         const { name, description, price, stock, icon } = req.body
         
+        // if(!name || !description || !price || !stock) {
+        //     return res.status(400).json({
+        //         status: "fail",
+        //         message: "Fields that are required must be provided"
+        //     })
+        // }
 
-        if(!name || !description || !price || !icon) {
-            return res.status(400).json({
-                status: "fail",
-                message: "Fields that are required must be provided"
-            })
-        }
-
-        const newProduct = await Product.insertOne({name, description, price, stock, icon, managerId: userId})
+        const newProduct = await Product.insertOne({name, description, price, stock, icon: req.file.filename, managerId: userId})
 
         res.status(201).json({
             status: "success",

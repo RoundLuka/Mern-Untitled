@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 const authContext = createContext();
 
@@ -11,10 +12,7 @@ const API_URL = "http://localhost:3000/api/auth"
 
 export function AuthContextProvider({children}) {
     const navigate = useNavigate();
-
-    const [user, setUser] = useState(() => {
-        return JSON.parse(localStorage.getItem("user")) || null;
-    });
+    const [user, setUser] = useState(null);
 
 
     const register = async (userData) => {
@@ -24,6 +22,7 @@ export function AuthContextProvider({children}) {
                 headers: {
                     "Content-Type": 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(userData)
             });
 
@@ -33,11 +32,10 @@ export function AuthContextProvider({children}) {
                 throw new Error(data.message)
             }
             setUser(data.user)
-            localStorage.setItem("user", JSON.stringify(user))
-            alert(data.message)
+            toast.success(data.message)
             navigate('/')
         } catch (err) {
-            alert(err)
+            toast.error(err)
         }
     }
     
@@ -48,6 +46,7 @@ export function AuthContextProvider({children}) {
                 headers: {
                     "Content-Type": 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(userData)
             });
 
@@ -57,17 +56,20 @@ export function AuthContextProvider({children}) {
                 throw new Error(data.message)
             }
             setUser(data.user)
-            localStorage.setItem("user", JSON.stringify(user))
-            alert(data.message)
+            toast.success(data.message)
             navigate('/')
             
         } catch (err) {
-            alert(err)
+            toast.error(err)
         }
     }
 
+    const logout = () => {
+        setUser(null)
+    }
+
     return (
-        <authContext.Provider value={{user, register, login}}>
+        <authContext.Provider value={{user, register, login, logout}}>
             {children}
         </authContext.Provider>
     )

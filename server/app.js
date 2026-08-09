@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cookieParser = require('cookie-parser');
+const path = require("path");
 
 // Routers
 const authRouter = require("./routers/auth.router");
@@ -27,6 +28,7 @@ app.use(cookieParser())
 
 // -------- Helper Middleware ---------
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'Images/products')))
 
 // -------- Monitoring Middleware --------
 app.use(morgan('dev'));

@@ -2,15 +2,15 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 
 const protect = async (req, res, next) => {
-    const token = req.cookies.JWT_Token
-
-    if(!token) {
-        return res.status(400).json({
-            message: "JWT Token is required to proceed with operation"
-        })
-    }
-
     try {
+        const token = req.cookies.JWT_Token
+
+        if(!token) {
+            return res.status(400).json({
+                message: "JWT Token is required to proceed with operation"
+            })
+        }
+
         const payload = jwt.verify(token, process.env.JWT_SECRET);
 
         if(!payload) {
