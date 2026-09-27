@@ -33,7 +33,7 @@ export function AuthContextProvider({children}) {
             }
             setUser(data.user)
             toast.success(data.message)
-            navigate('/')
+            navigate('/verify')
         } catch (err) {
             toast.error(err)
         }
@@ -64,12 +64,35 @@ export function AuthContextProvider({children}) {
         }
     }
 
+    const verify = async (code) => {
+        try {
+            const response = await fetch(`${API_URL}/verify`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": 'application/json'
+                },
+                body: JSON.stringify(code)
+            });
+
+            const data = await response.json();
+
+            if(!response.ok) {
+                throw new Error(data.message)
+            }
+
+            toast.success(data.message)
+            navigate('/')
+        } catch (err) {
+            toast.error(err)
+        }
+    }
+
     const logout = () => {
         setUser(null)
     }
 
     return (
-        <authContext.Provider value={{user, register, login, logout}}>
+        <authContext.Provider value={{user, register, login, logout, verify}}>
             {children}
         </authContext.Provider>
     )

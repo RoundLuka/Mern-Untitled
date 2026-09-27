@@ -28,7 +28,10 @@ const register = async (req, res, next) => {
 
         const user = await User.create({username, email, password})
 
+        await user.sendVerificationCode(user.email)
+
         user.password = undefined
+        user.code = undefined
 
         res.status(200).json({
             status: "success",
@@ -70,6 +73,13 @@ const login = async (req, res, next) => {
                 message: "Credentials are incorrect"
             })
         }
+
+        if(!user.isVerified) {
+            return res.status(401).json({
+                status: "fail",
+                message: "You must first verify email address"
+            })
+        }
         
         // 1. Payload ობიექტი, მომხმარებლის ინფორმაცია
         // 2. Server-ის საიდმულო გასაღები secret
@@ -102,4 +112,35 @@ const login = async (req, res, next) => {
     }
 }
 
-module.exports = { register, login }
+
+// verify email via smtp standard code (OAuth2)
+const verify = async (req, res, next) => {
+    try {
+        const { code } = req.body;
+
+        // 2 accounts can have same verification code
+        const accountWithCode = await User.findOne({code})
+
+        if(!accountWithCode) {
+            return res.status(400).json({
+                status: 'fail',
+                message: "Verification code is expired or invalid"
+            })
+        }
+
+        accountWithCode.isVerified = true
+        accountWithCode.code = undefined
+
+        await accountWithCode.save()
+
+        res.status(200).json({
+            status: "success",
+            message: "Verification successful!"
+        })
+
+    } catch (err) {
+        console.log(err)
+    } 
+}
+
+module.exports = { register, login, verify }
